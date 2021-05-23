@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float angleSpeed;
 
+    [SerializeField] private Gun[] guns;
+
     private Transform _cameraTransform;
     private Transform _selfTransform;
     private Rigidbody _selfRigidbody;
@@ -36,6 +38,14 @@ public class PlayerController : MonoBehaviour
         else
         {
             _selfAgent.isStopped = true;
+        }
+
+        if (Input.GetButton("Fire1"))
+        {
+            foreach (var gun in guns)
+            {
+                gun.Fire();
+            }
         }
     }
 
