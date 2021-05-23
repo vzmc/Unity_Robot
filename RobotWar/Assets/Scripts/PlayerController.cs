@@ -10,18 +10,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float angleSpeed;
 
-    [SerializeField] private Gun[] guns;
+    [SerializeField] private GunRoot gunRoot;
+    [SerializeField] private float scrollScaler = 10f;
 
-    private Transform _cameraTransform;
+    private Camera _mainCamera;
     private Transform _selfTransform;
     private Rigidbody _selfRigidbody;
     private NavMeshAgent _selfAgent;
 
-    private Vector3 _input;
-
     private void Awake()
     {
-        _cameraTransform = Camera.main.transform;
+        _mainCamera = Camera.main;
         _selfTransform = transform;
         _selfRigidbody = GetComponent<Rigidbody>();
         _selfAgent = GetComponent<NavMeshAgent>();
@@ -29,11 +28,11 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        var input = GetInputInCameraSpace(new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")));
-        if (input.magnitude > float.Epsilon)
+        var moveDirection = GetMoveDirection(new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")));
+        if (moveDirection.magnitude > float.Epsilon)
         {
             _selfAgent.isStopped = false;
-            _selfAgent.SetDestination(_selfTransform.position + input);
+            _selfAgent.SetDestination(_selfTransform.position + moveDirection);
         }
         else
         {
@@ -42,34 +41,43 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetButton("Fire1"))
         {
-            foreach (var gun in guns)
-            {
-                gun.Fire();
-            }
+            gunRoot.Fire();
+        }
+
+        gunRoot.SetAimDirection(GetAimDirection(Input.mousePosition));
+
+        if (Mathf.Abs(Input.mouseScrollDelta.y) > float.Epsilon)
+        {
+            gunRoot.ChangePitchAngle(Input.mouseScrollDelta.y * scrollScaler);
         }
     }
 
-    /*private void FixedUpdate()
+    private Vector3 GetMoveDirection(Vector3 input)
     {
-        if (_input.magnitude <= float.Epsilon) 
-            return;
-        
-        var input = GetInputInCameraSpace(_input); _selfAgent.isStopped = false;
-        
-        var toRotation = Quaternion.LookRotation(input, Vector3.up);
-        var nextRotation = Quaternion.RotateTowards(_selfRigidbody.rotation, toRotation, angleSpeed * Time.deltaTime);
-        _selfRigidbody.MoveRotation(nextRotation);
-    
-        var nextPosition = _selfRigidbody.position + speed * Time.deltaTime * _selfTransform.forward;
-        _selfRigidbody.MovePosition(nextPosition);
-    }*/
+        var direction = _mainCamera.transform.TransformDirection(input);
+        direction.y = 0;
+        direction.Normalize();
 
-    private Vector3 GetInputInCameraSpace(Vector3 input)
+        return direction;
+    }
+
+    private Vector3 GetAimDirection(Vector3 mousePosition)
     {
-        input = _cameraTransform.TransformDirection(input);
-        input.y = 0;
-        input.Normalize();
-
-        return input;
+        var ray = _mainCamera.ScreenPointToRay(mousePosition);
+        var layer = LayerMask.GetMask("Floor");
+        Vector3 direction;
+        if (Physics.Raycast(ray, out var hitInfo, 1000f, layer))
+        {
+            direction = hitInfo.point - gunRoot.transform.position;
+        }
+        else
+        {
+            direction = _selfTransform.forward;
+        }
+        
+        direction.y = 0;
+        direction.Normalize();
+        
+        return direction;
     }
 }
