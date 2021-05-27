@@ -162,9 +162,11 @@ MonoBehaviour:
     type: 3}
   body: {fileID: 9214966951490820506}
   particle: {fileID: 7458941851515841829}
-  speed: 15
-  angularSpeed: 90
-  minCheckInterval: 0.1
+  minSpeed: 15
+  maxSpeed: 15
+  minAngularSpeed: 90
+  maxAngularSpeed: 90
+  minCheckInterval: 0.5
   maxCheckInterval: 0.5
 --- !u!1001 &6240073581425709939
 PrefabInstance:

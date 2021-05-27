@@ -10,11 +10,15 @@ public class Missile : MonoBehaviour
     private GameObject body;
     [SerializeField]
     private ParticleSystem particle;
-
+    
     [SerializeField]
-    private float speed;
+    private float minSpeed;
     [SerializeField]
-    private float angularSpeed;
+    private float maxSpeed;
+    [SerializeField]
+    private float minAngularSpeed;
+    [SerializeField]
+    private float maxAngularSpeed;
     [SerializeField]
     private float minCheckInterval;
     [SerializeField]
@@ -25,7 +29,9 @@ public class Missile : MonoBehaviour
     private Rigidbody _selfRigidbody;
     
     private Vector3 _rotateAxis;
-
+    private float _speed;
+    private float _angularSpeed;
+    
     private void Awake()
     {
         _selfTransform = GetComponent<Transform>();
@@ -54,6 +60,8 @@ public class Missile : MonoBehaviour
             var forward = _selfTransform.forward;
             var toTarget = _targetTransform.position - _selfTransform.position;
             _rotateAxis = _selfTransform.InverseTransformDirection(Vector3.Cross(forward, toTarget).normalized);
+            _speed = Random.Range(minSpeed, maxSpeed);
+            _angularSpeed = Random.Range(minAngularSpeed, maxAngularSpeed);
             yield return new WaitForSeconds(Random.Range(minCheckInterval, maxCheckInterval));
         }
     }
@@ -62,14 +70,15 @@ public class Missile : MonoBehaviour
     {
         if (!body.activeSelf) 
             return;
-
-        _selfRigidbody.MoveRotation(_selfRigidbody.rotation * Quaternion.AngleAxis(angularSpeed * Time.deltaTime, _rotateAxis));
-        _selfRigidbody.MovePosition(_selfRigidbody.position + speed * Time.deltaTime * _selfTransform.forward);
+        
+        _selfRigidbody.MoveRotation(_selfRigidbody.rotation *
+                                    Quaternion.AngleAxis(_angularSpeed * Time.deltaTime, _rotateAxis));
+        _selfRigidbody.MovePosition(_selfRigidbody.position + _speed * Time.deltaTime * _selfTransform.forward);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy") || other.CompareTag("Missile"))
         {
             return;
         }

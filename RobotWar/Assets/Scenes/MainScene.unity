@@ -574,7 +574,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 852865459}
   m_LocalRotation: {x: 0.35355338, y: 0.35355338, z: -0.1464466, w: 0.8535535}
-  m_LocalPosition: {x: -25.177818, y: 37.2357, z: -41.39171}
+  m_LocalPosition: {x: -25.177788, y: 37.235664, z: -41.391674}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 413120163}
@@ -675,7 +675,7 @@ MonoBehaviour:
     m_Bits: 1024
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 1
-  antialiasingMode: 1
+  antialiasingMode: 2
   temporalAntialiasing:
     jitterSpread: 0.75
     sharpness: 0.25
@@ -997,6 +997,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 435363300, guid: f709230d81c4a674ba48a066ad25ae58, type: 3}
+      propertyPath: speed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2012278473, guid: f709230d81c4a674ba48a066ad25ae58, type: 3}
+      propertyPath: m_Speed
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 3969455218389455110, guid: f709230d81c4a674ba48a066ad25ae58,
         type: 3}
       propertyPath: m_Name
