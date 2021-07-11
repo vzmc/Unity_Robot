@@ -162,12 +162,12 @@ MonoBehaviour:
     type: 3}
   body: {fileID: 9214966951490820506}
   particle: {fileID: 7458941851515841829}
-  minSpeed: 15
-  maxSpeed: 15
-  minAngularSpeed: 90
-  maxAngularSpeed: 90
-  minCheckInterval: 0.5
-  maxCheckInterval: 0.5
+  ratedSpeed: 15
+  speedDeviation: 0.05
+  ratedAngularSpeed: 90
+  angularSpeedDeviation: 0.05
+  checkInterval: 0.5
+  lockAccuracy: 4
 --- !u!1001 &6240073581425709939
 PrefabInstance:
   m_ObjectHideFlags: 0

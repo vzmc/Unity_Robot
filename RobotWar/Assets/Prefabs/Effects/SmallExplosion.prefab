@@ -4805,7 +4805,7 @@ GameObject:
   - component: {fileID: 2063958893788246721}
   - component: {fileID: 2063126330045693869}
   m_Layer: 0
-  m_Name: SmallExplosion Variant
+  m_Name: SmallExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

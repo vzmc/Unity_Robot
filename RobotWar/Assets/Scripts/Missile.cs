@@ -12,17 +12,17 @@ public class Missile : MonoBehaviour
     private ParticleSystem particle;
     
     [SerializeField]
-    private float minSpeed;
+    private float ratedSpeed;
+    [SerializeField, Range(0, 1)]
+    private float speedDeviation;
     [SerializeField]
-    private float maxSpeed;
+    private float ratedAngularSpeed;
+    [SerializeField, Range(0, 1)]
+    private float angularSpeedDeviation;
     [SerializeField]
-    private float minAngularSpeed;
-    [SerializeField]
-    private float maxAngularSpeed;
-    [SerializeField]
-    private float minCheckInterval;
-    [SerializeField]
-    private float maxCheckInterval;
+    private float checkInterval;
+    [SerializeField] 
+    private float lockAccuracy;
 
     private Transform _targetTransform;
     private Transform _selfTransform;
@@ -31,6 +31,7 @@ public class Missile : MonoBehaviour
     private Vector3 _rotateAxis;
     private float _speed;
     private float _angularSpeed;
+    private Vector3 _lockOffset;
     
     private void Awake()
     {
@@ -57,12 +58,10 @@ public class Missile : MonoBehaviour
     {
         while (_targetTransform)
         {
-            var forward = _selfTransform.forward;
-            var toTarget = _targetTransform.position - _selfTransform.position;
-            _rotateAxis = _selfTransform.InverseTransformDirection(Vector3.Cross(forward, toTarget).normalized);
-            _speed = Random.Range(minSpeed, maxSpeed);
-            _angularSpeed = Random.Range(minAngularSpeed, maxAngularSpeed);
-            yield return new WaitForSeconds(Random.Range(minCheckInterval, maxCheckInterval));
+            _lockOffset = Random.insideUnitSphere * lockAccuracy;
+            _speed = Random.Range(ratedSpeed * (1 - speedDeviation), ratedSpeed * (1 + speedDeviation));
+            _angularSpeed = Random.Range(ratedAngularSpeed * (1 - angularSpeedDeviation), ratedAngularSpeed * (1 + angularSpeedDeviation));
+            yield return new WaitForSeconds(checkInterval);
         }
     }
     
@@ -71,8 +70,11 @@ public class Missile : MonoBehaviour
         if (!body.activeSelf) 
             return;
         
-        _selfRigidbody.MoveRotation(_selfRigidbody.rotation *
-                                    Quaternion.AngleAxis(_angularSpeed * Time.deltaTime, _rotateAxis));
+        var forward = _selfTransform.forward;
+        var toTarget = _targetTransform.position + _lockOffset - _selfTransform.position;
+        _rotateAxis = _selfTransform.InverseTransformDirection(Vector3.Cross(forward, toTarget).normalized);
+        
+        _selfRigidbody.MoveRotation(_selfRigidbody.rotation * Quaternion.AngleAxis(_angularSpeed * Time.deltaTime, _rotateAxis));
         _selfRigidbody.MovePosition(_selfRigidbody.position + _speed * Time.deltaTime * _selfTransform.forward);
     }
 
